@@ -1,3 +1,5 @@
+// following https://anteru.net/blog/2012/11/04/2016/index.html
+
 #include "CL/cl.h"
 #include <vector>
 #include <iostream>
