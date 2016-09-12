@@ -3,9 +3,37 @@
 #include "CL/cl.h"
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include <cstdint>
 
 using namespace std;
+
+void checkError(cl_int error)
+{
+    if (error != CL_SUCCESS) {
+        cerr << "OpenCL call failed with error " << error << endl;
+        exit(1);
+    }
+}
+
+string loadKernel(const char* name)
+{
+    ifstream in(name);
+    string result((istreambuf_iterator<char>(in)), istreambuf_iterator<char>());
+    return result;
+}
+
+cl_program createProgram(const std::string& source, cl_context context)
+{
+    size_t lengths[1] = { source.size() };
+    const char* sources[1] = { source.data() };
+
+    cl_int error = 0;
+    auto program = clCreateProgramWithSource(context, 1, sources, lengths, &error);
+    checkError(error);
+
+    return program;
+}
 
 void main()
 {
@@ -77,6 +105,13 @@ void main()
         contextProperties, deviceIdCount,
         deviceIds.data(), nullptr,
         nullptr, &error);
+
+    cout << "Creating the program ..." << endl;
+    const auto kernelCode = loadKernel("saxpy.cl");
+    const auto program = createProgram(kernelCode, context);
+
+    cout << "Releasing the program ..." << endl;
+    clReleaseProgram(program);
 
     cout << "Releasing the context ..." << endl;
     clReleaseContext(context);
