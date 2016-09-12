@@ -11,7 +11,7 @@ using namespace std;
 void checkError(cl_int error)
 {
     if (error != CL_SUCCESS) {
-        cerr << "OpenCL call failed with error " << error << endl;
+        cerr << "OpenCL call failed with error " << error << endl << flush;
         exit(1);
     }
 }
@@ -23,7 +23,7 @@ string loadKernel(const char* name)
     return result;
 }
 
-cl_program createProgram(const std::string& source, cl_context context)
+cl_program createProgram(const string& source, cl_context context)
 {
     size_t lengths[1] = { source.size() };
     const char* sources[1] = { source.data() };
@@ -108,7 +108,18 @@ void main()
 
     cout << "Creating the program ..." << endl;
     const auto kernelCode = loadKernel("saxpy.cl");
-    const auto program = createProgram(kernelCode, context);
+    auto program = createProgram(kernelCode, context);
+
+    cout << "Building the program ..." << endl;
+    error = clBuildProgram(program, deviceIdCount, deviceIds.data(), nullptr, nullptr, nullptr);
+    checkError(error);
+
+    cout << "Creating the kernel ..." << endl;
+    auto kernel = clCreateKernel(program, "SAXPY", &error);
+    checkError(error);
+
+    cout << "Releasing the kernel ..." << endl;
+    clReleaseKernel(kernel);
 
     cout << "Releasing the program ..." << endl;
     clReleaseProgram(program);
