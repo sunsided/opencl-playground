@@ -63,7 +63,7 @@ void main()
         delete[] platformName;
         delete[] platformVersion;
 
-        // get the number of defines on the first platform
+        // get the number of devices on the first platform
         cl_uint deviceIdCount = 0;
         clGetDeviceIDs(platformId, CL_DEVICE_TYPE_ALL, 0, nullptr, &deviceIdCount);
 
