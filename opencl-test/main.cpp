@@ -118,6 +118,36 @@ void main()
     auto kernel = clCreateKernel(program, "SAXPY", &error);
     checkError(error);
 
+    // prepare some test data
+    static const size_t testDataSize = 1 << 10;
+    vector<float> a(testDataSize), b(testDataSize);
+    for (int i = 0; i < testDataSize; ++i) {
+        a[i] = static_cast<float> (23 ^ i);
+        b[i] = static_cast<float> (42 ^ i);
+    }
+
+    // buffer for the first parameter
+    auto aBuffer = clCreateBuffer(context,
+        CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+        sizeof(float) * (testDataSize),
+        a.data(), &error);
+    checkError(error);
+
+    // buffer for the second parameter
+    auto bBuffer = clCreateBuffer(context,
+        CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
+        sizeof(float) * (testDataSize),
+        b.data(), &error);
+    checkError(error);
+
+    cout << "Creating the command queue ..." << endl;
+    auto queue = clCreateCommandQueue(context, deviceIds[0], 0, &error);
+    checkError(error);
+
+    cout << "Releasing the buffers ..." << endl;
+    clReleaseMemObject(bBuffer);
+    clReleaseMemObject(aBuffer);
+
     cout << "Releasing the kernel ..." << endl;
     clReleaseKernel(kernel);
 
