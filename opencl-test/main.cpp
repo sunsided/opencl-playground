@@ -115,15 +115,15 @@ void main()
     checkError(error);
 
     cout << "Creating the kernel ..." << endl;
-    auto kernel = clCreateKernel(program, "SAXPY", &error);
+    auto kernel = clCreateKernel(program, "SAXPY", &error);     // SAXPY is Y = a*X + Y
     checkError(error);
 
     // prepare some test data
     static const size_t testDataSize = 1 << 10;
     vector<float> a(testDataSize), b(testDataSize);
     for (int i = 0; i < testDataSize; ++i) {
-        a[i] = static_cast<float> (23 ^ i);
-        b[i] = static_cast<float> (42 ^ i);
+        a[i] = static_cast<float> (i);                          // "X" in SAXPY
+        b[i] = static_cast<float> (10);                         // "Y" in SAXPY, so Y = a*i+10
     }
 
     // buffer for the first parameter
@@ -140,9 +140,38 @@ void main()
         b.data(), &error);
     checkError(error);
 
+    // the command queue
     cout << "Creating the command queue ..." << endl;
     auto queue = clCreateCommandQueue(context, deviceIds[0], 0, &error);
     checkError(error);
+
+    // set the parameters for the kernel (positional)
+    clSetKernelArg(kernel, 0, sizeof(cl_mem), &aBuffer);
+    clSetKernelArg(kernel, 1, sizeof(cl_mem), &bBuffer);
+    static const float two = 2.0f;
+    clSetKernelArg(kernel, 2, sizeof(float), &two);
+
+    // enqueue the command to execute the kernel
+    const size_t globalWorkSize[] = { testDataSize, 0, 0 };
+    error = clEnqueueNDRangeKernel(queue, kernel,
+        1,                                  // work_dim
+        nullptr,                            // global_work_offset
+        globalWorkSize,
+        nullptr,                            // local_work_size
+        0, nullptr, nullptr);
+    checkError(error);
+
+    // enqueue the command to read the results back
+    error = clEnqueueReadBuffer(queue, bBuffer,
+        CL_TRUE,                            // blocking_read
+        0,                                  // offset
+        sizeof(float) * testDataSize,       // number of bytes to read
+        b.data(),                           // target pointer in host memory
+        0, nullptr, nullptr);
+    checkError(error);
+
+    cout << "Releasing the command queue ..." << endl;
+    clReleaseCommandQueue(queue);
 
     cout << "Releasing the buffers ..." << endl;
     clReleaseMemObject(bBuffer);
