@@ -255,7 +255,7 @@ void executeConvolution(cv::Mat src, cl_uint deviceIdCount, vector<cl_device_id>
     // generate a filter kernel
     // http://dev.theomader.com/gaussian-kernel-calculator/
     // TODO: split the kernel, perform two operations
-    const auto numElements = 11*11;
+    const auto filterRadius = 11;
     float filter[] = {
         0.0071, 0.007427, 0.007691, 0.007886, 0.008005, 0.008045, 0.008005, 0.007886, 0.007691, 0.007427, 0.0071,
         0.007427, 0.007768, 0.008045, 0.008248, 0.008373, 0.008415, 0.008373, 0.008248, 0.008045, 0.007768, 0.007427,
@@ -269,8 +269,9 @@ void executeConvolution(cv::Mat src, cl_uint deviceIdCount, vector<cl_device_id>
         0.007427, 0.007768, 0.008045, 0.008248, 0.008373, 0.008415, 0.008373, 0.008248, 0.008045, 0.007768, 0.007427,
         0.0071, 0.007427, 0.007691, 0.007886, 0.008005, 0.008045, 0.008005, 0.007886, 0.007691, 0.007427, 0.0071
     };
-    
-    auto define = string("-D FILTER_SIZE=") + to_string(11);
+    assert((sizeof(filter) / sizeof(filter[0])) == (filterRadius*filterRadius));
+
+    auto define = string("-D FILTER_SIZE=") + to_string(filterRadius);
 
     cout << "Creating the program ..." << endl;
     const auto kernelCode = loadKernelCodeFromFile("convolution.cl");
@@ -302,7 +303,7 @@ void executeConvolution(cv::Mat src, cl_uint deviceIdCount, vector<cl_device_id>
     checkError(error);
 
     cout << "Creating buffer for filter weights ..." << endl;
-    auto filterWeightsBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(filter[0]) * numElements, filter, &error);
+    auto filterWeightsBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(filter), filter, &error);
     checkError(error);
 
         cout << "Creating the command queue ..." << endl;
