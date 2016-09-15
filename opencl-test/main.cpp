@@ -46,7 +46,7 @@ cv::Mat loadImageBGRA(const string &path)
 void main()
 {
     cout << "Loading image ..." << endl;
-    auto src = loadImageBGRA("..\\images\\emily_browning.jpg");
+    auto src = loadImageBGRA("../images/emily_browning.jpg");
     assert(src.dims > 0);
 
 #if 0
