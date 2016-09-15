@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <OpenCV_LibraryPath>D:\dev\libs\opencv\x64\vc12\lib</OpenCV_LibraryPath>
+    <OpenCV_ExecutablePath>D:\dev\libs\opencv\x64\vc12\bin</OpenCV_ExecutablePath>
+    <OpenCV_IncludePath>D:\dev\libs\opencv\include</OpenCV_IncludePath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ExecutablePath>$(OpenCV_ExecutablePath);$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(OpenCV_IncludePath);$(IncludePath)</IncludePath>
+    <LibraryPath>$(OpenCV_LibraryPath);$(LibraryPath)</LibraryPath>
+    <ReferencePath>$(OpenCV_ExecutablePath);$(VC_ReferencesPath_x64);</ReferencePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>opencv_core310.lib;opencv_imgcodecs310.lib;opencv_highgui310.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ClCompile />
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="OpenCV_LibraryPath">
+      <Value>$(OpenCV_LibraryPath)</Value>
+    </BuildMacro>
+    <BuildMacro Include="OpenCV_ExecutablePath">
+      <Value>$(OpenCV_ExecutablePath)</Value>
+    </BuildMacro>
+    <BuildMacro Include="OpenCV_IncludePath">
+      <Value>$(OpenCV_IncludePath)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

@@ -2,9 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <OpenCL_IncludePath>C:\Program Files (x86)\AMD APP SDK\3.0\include</OpenCL_IncludePath>
-    <OpenCL_ExecutablePath>C:\Program Files (x86)\AMD APP SDK\3.0\bin\x86_64</OpenCL_ExecutablePath>
-    <OpenCL_LibraryPath>C:\Program Files (x86)\AMD APP SDK\3.0\lib\x86_64</OpenCL_LibraryPath>
+    <OpenCL_IncludePath>D:\CUDA\8.0\include</OpenCL_IncludePath>
+    <OpenCL_ExecutablePath>D:\CUDA\8.0\bin</OpenCL_ExecutablePath>
+    <OpenCL_LibraryPath>D:\CUDA\8.0\lib\x64</OpenCL_LibraryPath>
     <OpenCL_Library>OpenCL.lib</OpenCL_Library>
   </PropertyGroup>
   <PropertyGroup>
